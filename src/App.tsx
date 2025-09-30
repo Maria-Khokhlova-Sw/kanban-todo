@@ -1,11 +1,27 @@
-import LoginModal from "./LoginModel.tsx";
-import "./index.css";
+"use client"
 
-export default function App() {
+import { UserProvider, useUser } from "./assets/context/UserContext"
+import Header from "./assets/components/header/Header"
+import LoginModal from "./assets/components/modal/LoginModal"
+import Window from "@/src/assets/components/window/Window";
+
+// Внутренний компонент, который использует контекст
+function AppContent() {
+  const { isModalOpen } = useUser()
 
   return (
-      <>
-        <LoginModal/>
-      </>
-  );
+    <>
+      <Header />
+      {isModalOpen && <LoginModal />}
+        <Window />
+    </>
+  )
+}
+
+export default function App() {
+  return (
+    <UserProvider>
+      <AppContent />
+    </UserProvider>
+  )
 }
