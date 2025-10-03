@@ -1,10 +1,10 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useTasks } from "../../context-task/context"
 import { EditTaskDialog } from "../edit-task/edit-tasks"
-import type { Task } from "../../lib/types"
+
 
 type ColumnProps = {
     title: string
@@ -14,7 +14,18 @@ export function Column({ title }: ColumnProps) {
     const { tasks, addTask, editTask, deleteTask } = useTasks()
     const [adding, setAdding] = useState(false)
     const [value, setValue] = useState("")
-    const [editingTask, setEditingTask] = useState<{ task: Task; column: string } | null>(null)
+    const [editingTask, setEditingTask] = useState<{ taskId: string; column: string } | null>(null)
+
+    useEffect(() => {
+        if (editingTask) {
+            document.body.style.overflow = "hidden"
+        }else {
+            document.body.style.overflow = ""
+        }
+        return () => {
+            document.body.style.overflow = ""
+        }
+    }, [editingTask]);
 
     const startAdding = () => setAdding(true)
 
@@ -32,12 +43,14 @@ export function Column({ title }: ColumnProps) {
         setValue("")
     }
 
-    const handleEditSave = (newText: string, newDescription?: string, newColumn?: string, newComment?: string) => {
+    const handleEditSave = (newText: string, newDescription?: string, newColumn?: string) => {
         if (editingTask) {
-            editTask(editingTask.column, editingTask.task.id, newText, newDescription, newColumn, newComment)
+            editTask(editingTask.column, editingTask.taskId, newText, newDescription, newColumn)
             setEditingTask(null)
         }
     }
+
+    const currentTask = editingTask ? tasks[editingTask.column]?.find((t) => t.id === editingTask.taskId) || null : null
 
     return (
         <>
@@ -45,11 +58,9 @@ export function Column({ title }: ColumnProps) {
                 <input type="text" placeholder="Название колонки" className="section-header" defaultValue={title} />
                 <ul className="tasks">
                     {tasks[title]?.map((task) => (
-                        <li key={task.id} className="task" onClick={() => setEditingTask({ task, column: title })}>
+                        <li key={task.id} className="task" onClick={() => setEditingTask({ taskId: task.id, column: title })}>
                             {task.text}
-                            <button
-                                className="delete-button"
-                                onClick={(e) => {
+                            <button className="delete-button" onClick={(e) => {
                                     e.stopPropagation()
                                     deleteTask(title, task.id)
                                 }}
@@ -72,7 +83,7 @@ export function Column({ title }: ColumnProps) {
                                     <button type="submit" disabled={!value.trim()}>
                                         Ок
                                     </button>
-                                    <button type="button" onClick={cancel}>
+                                    <button type="button" onClick={() => cancel}>
                                         Отмена
                                     </button>
                                 </div>
@@ -86,7 +97,12 @@ export function Column({ title }: ColumnProps) {
                 </button>
             </div>
 
-            <EditTaskDialog task={editingTask?.task || null} onClose={() => setEditingTask(null)} onSave={handleEditSave} />
+            <EditTaskDialog
+                task={currentTask}
+                column={editingTask?.column || ""}
+                onClose={() => setEditingTask(null)}
+                onSave={handleEditSave}
+            />
         </>
     )
 }

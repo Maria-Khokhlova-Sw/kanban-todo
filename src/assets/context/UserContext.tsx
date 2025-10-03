@@ -16,6 +16,17 @@ export function UserProvider({ children }: { children: ReactNode }) {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
 
   useEffect(() => {
+    if(isModalOpen){
+      document.body.style.overflow = "hidden"
+    }else {
+      document.body.style.overflow = ""
+    }
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [isModalOpen]);
+
+  useEffect(() => {
     const savedUsername = localStorage.getItem("username")
     if (savedUsername) {
       setUsername(savedUsername)

@@ -1,72 +1,162 @@
-.modal-overlay{
+.modal-overlay {
     position: fixed;
-    inset: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 50;
+    z-index: 1000;
 }
 
 .modal {
     background: white;
     border-radius: 8px;
     padding: 24px;
-    max-width: 500px;
     width: 90%;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 .modal-header {
+    margin: 0 0 20px 0;
     font-size: 20px;
     font-weight: 600;
-    margin-bottom: 16px;
 }
 
 .modal-form {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+}
+
+.input-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 8px;
 }
 
 .modal-input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #d1d5db;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 14px;
 }
 
 .modal-input:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #4a90e2;
+}
+
+/* New styles for comments section */
+.comments-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    background: #fafafa;
+}
+
+.comment-item {
+    background: white;
+    border-radius: 4px;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-left: 3px solid #4a90e2;
+}
+
+.comment-item:last-child {
+    margin-bottom: 0;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.comment-author {
+    font-weight: 600;
+    font-size: 13px;
+    color: #4a90e2;
+}
+
+.comment-date {
+    font-size: 11px;
+    color: #999;
+}
+
+.comment-text {
+    font-size: 14px;
+    color: #333;
+    word-wrap: break-word;
+}
+
+.no-comments {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    padding: 16px;
+}
+
+.comment-input-wrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.add-comment-btn {
+    padding: 8px 16px;
+    background: #4a90e2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.add-comment-btn:hover {
+    background: #357abd;
+}
+
+.add-comment-btn:disabled {
+    background: #ccc;
+    cursor: not-allowed;
 }
 
 .modal-buttons {
     display: flex;
-    gap: 8px;
+    gap: 12px;
     justify-content: flex-end;
+    margin-top: 16px;
 }
 
 .modal-buttons button {
     padding: 8px 16px;
-    border: 1px solid #d1d5db;
     border-radius: 4px;
-    background: white;
+    border: none;
     cursor: pointer;
     font-size: 14px;
 }
 
+.modal-buttons button[type="button"] {
+    background: #f5f5f5;
+    color: #333;
+}
+
 .modal-buttons button[type="submit"] {
-    background: #3b82f6;
+    background: #4a90e2;
     color: white;
-    border-color: #3b82f6;
 }
 
-.modal-buttons button[type="submit"]:hover {
-    background: #2563eb;
-}
-
-.modal-buttons button[type="button"]:hover {
-    background: #f3f4f6;
+.modal-buttons button[type="submit"]:disabled {
+    background: #ccc;
+    cursor: not-allowed;
 }

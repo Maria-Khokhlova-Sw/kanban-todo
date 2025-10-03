@@ -27,22 +27,17 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
         })
     }, [tasks, isClient])
 
-    const addTask = (column: string, text: string, description?: string, comment?: string) => {
+    const addTask = (column: string, text: string, description?: string) => {
         setTasks((prev) => ({
             ...prev,
-            [column]: [...(prev[column] || []), { id: crypto.randomUUID(), text, description, column, comment }],
+            [column]: [...(prev[column] || []), { id: crypto.randomUUID(), text, description, column, comments: [] }],
         }))
     }
 
-    const editTask = (
-        column: string,
-        id: string,
-        newText: string,
-        newDescription?: string,
-        newColumn?: string,
-        newComment?: string,
-    ) => {
+    const editTask = (column: string, id: string, newText: string, newDescription?: string, newColumn?: string) => {
         setTasks((prev) => {
+            if (!prev[column]) return prev
+
             if (newColumn && newColumn !== column) {
                 const taskToMove = prev[column].find((task) => task.id === id)
                 if (!taskToMove) return prev
@@ -57,7 +52,6 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
                             text: newText,
                             description: newDescription,
                             column: newColumn,
-                            comment: newComment,
                         },
                     ],
                 }
@@ -65,20 +59,54 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
             return {
                 ...prev,
                 [column]: prev[column].map((task) =>
-                    task.id === id ? { ...task, text: newText, description: newDescription, column, comment: newComment } : task,
+                    task.id === id ? { ...task, text: newText, description: newDescription, column } : task,
                 ),
             }
         })
     }
 
     const deleteTask = (column: string, id: string) => {
-        setTasks((prev) => ({
-            ...prev,
-            [column]: prev[column].filter((task) => task.id !== id),
-        }))
+        setTasks((prev) => {
+            if (!prev[column]) return prev
+
+            return {
+                ...prev,
+                [column]: prev[column].filter((task) => task.id !== id),
+            }
+        })
     }
 
-    return <TasksContext.Provider value={{ tasks, addTask, editTask, deleteTask }}>{children}</TasksContext.Provider>
+    const addComment = (column: string, id: string, commentText: string, author: string) => {
+        setTasks((prev) => {
+            if (!prev[column]) return prev
+
+            return {
+                ...prev,
+                [column]: prev[column].map((task) =>
+                    task.id === id
+                        ? {
+                            ...task,
+                            comments: [
+                                ...(task.comments || []),
+                                {
+                                    id: crypto.randomUUID(),
+                                    text: commentText,
+                                    author,
+                                    timestamp: Date.now(),
+                                },
+                            ],
+                        }
+                        : task,
+                ),
+            }
+        })
+    }
+
+    return (
+        <TasksContext.Provider value={{ tasks, addTask, editTask, deleteTask, addComment }}>
+            {children}
+        </TasksContext.Provider>
+    )
 }
 
 export function useTasks() {
